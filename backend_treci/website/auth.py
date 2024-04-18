@@ -25,8 +25,10 @@ def signup():
         first_name = request.form.get('firstName')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
-
-        if len(email) <4:
+        user= User.query.filter_by(email=email).first()
+        if user:
+            flash("Email vec postoji", category="error")
+        elif len(email) <4:
             flash("Email mora biti duzi od 3 karaktera", category="error")
         elif len(first_name) <2:
             flash("Ime mora biti duze od 1 karaktera", category="error")
