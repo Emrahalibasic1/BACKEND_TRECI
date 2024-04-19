@@ -10,6 +10,19 @@ def hello():
 
 @auth.route('/login',methods =['GET','POST'])
 def login():
+    if request.method == 'POST':
+        form_email = request.form.get('email')
+        form_password = request.form.get('password')
+
+        user = User.query.filter_by(email=form_email).first()
+        if user:
+            if check_password_hash(user.password, form_password):
+                flash('Uspesno ste se ulogovali', category='success')
+                return redirect(url_for('views.home'))
+            else:
+                flash('Pogresan email ili password', category='error')
+        else:
+            flash('Pogresan email ili password', category='error')    
     return render_template("login.html")
 
 
