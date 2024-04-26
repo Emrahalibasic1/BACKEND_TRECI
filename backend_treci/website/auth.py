@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import db
+from flask_login import login_user, logout_user,login_required,current_user
 auth = Blueprint('auth', __name__)
 
 @auth.route('/hello')
@@ -17,18 +18,21 @@ def login():
         user = User.query.filter_by(email=form_email).first()
         if user:
             if check_password_hash(user.password, form_password):
-                flash('Uspesno ste se ulogovali', category='success')
+                flash('Uspijesno ste se ulogovali', category='success')
+                login_user(user, remember=True)
                 return redirect(url_for('views.home'))
             else:
                 flash('Pogresan email ili password', category='error')
         else:
             flash('Pogresan email ili password', category='error')    
-    return render_template("login.html")
+    return render_template("login.html",user=current_user)
 
 
 @auth.route('/logout')
+@login_required
 def logout():
-    return render_template("home.html")
+    logout_user()
+    return redirect(url_for('auth.login'))
 
 
 @auth.route('/sign-up',methods =['GET','POST'])
@@ -56,5 +60,6 @@ def signup():
             db.session.commit()
         
             flash("Racun je kreiran", category="success")
+            login_user(new_user, remember=True)
             return redirect(url_for('views.home'))
-    return render_template("sign_up.html",fghfg=123)
+    return render_template("sign_up.html",user=current_user)
