@@ -42,6 +42,11 @@ def signup():
         first_name = request.form.get('firstName')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
+        #ovo je nase
+
+        is_admin = request.form.get('is_admin')
+
+        #ovo je kraj naseg
         user= User.query.filter_by(email=email).first()
         if user:
             flash("Email vec postoji", category="error")
@@ -53,6 +58,7 @@ def signup():
             flash("Password netacan", category="error")
         elif len(password1) <7:
             flash("Password mora biti duzi od 6 karaktera", category="error")
+    
         else:
             #dodaj korisnika u bazu
             new_user = User(email=email,password=generate_password_hash(password1,method='pbkdf2:sha256'),first_name=first_name)
